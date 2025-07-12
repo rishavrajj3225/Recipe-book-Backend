@@ -4,7 +4,12 @@ import cookieParser from "cookie-parser"
 
 const app = express()
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // 🔐 or use your frontend URL here for stricter rules
+    credentials: true,
+  })
+);
 
 app.use(express.json({ limit: "900kb" }));
 app.use(express.urlencoded({ extended: true, limit: "900kb" }));
@@ -18,7 +23,6 @@ import recipeRoute from "./routes/recipe.route.js"
 
 // routes declaration
 
-app.use("/api/v1/users/", userRoute);
-app.use("/api/v1/recipe/", recipeRoute);
-
+app.use(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/`, userRoute);
+app.use(`${import.meta.env.VITE_BACKEND_URL}/api/v1/recipe/`, recipeRoute);
 export { app }
