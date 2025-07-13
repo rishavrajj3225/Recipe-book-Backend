@@ -23,6 +23,6 @@ import recipeRoute from "./routes/recipe.route.js"
 
 // routes declaration
 
-app.use(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/`, userRoute);
-app.use(`${import.meta.env.VITE_BACKEND_URL}/api/v1/recipe/`, recipeRoute);
+app.use(`/api/v1/users/`, userRoute);
+app.use(`/api/v1/recipe/`, recipeRoute);
 export { app }
