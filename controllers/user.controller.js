@@ -106,7 +106,17 @@ const loginUser = asyncHandler(async(req, resp) => {
         )
 })
 
+const findUserById = async (id) => {
+    try {
+        const user = await User.findById(id).select("--password");
+        return user;
+    } catch (error) {
+        throw new ApiError(500, `Something went wrong while finding user`)
+    }
+}
+
 export {
     registerUser,
-    loginUser
+    loginUser,
+    findUserById
 }
