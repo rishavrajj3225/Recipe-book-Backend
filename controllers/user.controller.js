@@ -15,49 +15,39 @@ const generateAccessToken = async(userId) => {
     }
 }
 
-const registerUser = asyncHandler(async(req, resp) => {
-    // get data from frontend
+const registerUser = asyncHandler(async (req, resp) => {
+  const { username, email, password } = req.body;
 
-    const { username, email, password } = req.body;
+  if ([username, email, password].some((field) => field.trim() === "")) {
+    throw new ApiError(400, `All fields are required`);
+  }
 
-    // validation
+  const existedUser = await User.findOne({
+    $or: [{ username }, { email }],
+  });
 
-    if (
-        [username, email, password].some((fields) => fields.trim() === "")
-    ) {
-        throw new ApiError(400, `All fields are required`)
-    }
+  if (existedUser) {
+    throw new ApiError(409, `user with email and password already exists`);
+  }
 
-    // check if student already exists
+  const user = await User.create({ username, email, password });
 
-    const existedUser = await User.findOne({
-        $or: [{ username }, { email }]
-    })
+  const accessToken = await user.generateAccessToken();
 
-    if (existedUser) {
-        throw new ApiError(409, `user with email and password already exists`)
-    }
+  const createdUser = await User.findById(user._id).select("--password");
 
-    // create user object
-
-    const user = await User.create({
-        username,
-        email,
-        password,
-    })
-
-    // remove password and refresh token from response
-
-    const createdUser = await User.findById(user._id).select(
-        "--password"
+  return resp.status(201).json(
+    new ApiResponse(
+      200,
+      {
+        user: createdUser,
+        access_token: accessToken,
+      },
+      `User Registered Successfully`
     )
+  );
+});
 
-    // return response
-
-    return resp.status(201).json(
-        new ApiResponse(200, createdUser, `User Register Successfully`)
-    )
-})
 
 
 const loginUser = asyncHandler(async(req, resp) => {
