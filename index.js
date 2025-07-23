@@ -6,6 +6,21 @@ dotenv.config({
     path: "./.env",
 });
 
+
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const swaggerData = await readFile(path.join(__dirname, 'swagger-output.json'), 'utf-8');
+const swaggerFile = JSON.parse(swaggerData);
+import swaggerUi from 'swagger-ui-express';
+import { readFile } from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 connectDB()
     .then(()=>{
         app.on("error", (error) => {

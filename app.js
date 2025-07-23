@@ -1,27 +1,19 @@
-import express from "express"
-import cors from "cors"
-import cookieParser from "cookie-parser"
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import userRoute from "./routes/user.route.js";
+import recipeRoute from "./routes/recipe.route.js";
 
-const app = express()
+const app = express();
 
-app.use(
-  cors({
-    origin: "*", // 🔐 or use your frontend URL here for stricter rules
-    credentials: true,
-  })
-);
-
+// Middleware
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json({ limit: "900kb" }));
 app.use(express.urlencoded({ extended: true, limit: "900kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-// routes
+app.use("/api/v1/users", userRoute);
+app.use("/api/v1/recipe", recipeRoute);
 
-import userRoute from "./routes/user.route.js";
-import recipeRoute from "./routes/recipe.route.js"
-
-// routes declaration
-app.use(`/api/v1/users/`, userRoute);
-app.use(`/api/v1/recipe/`, recipeRoute);
-export { app }
+export { app };
